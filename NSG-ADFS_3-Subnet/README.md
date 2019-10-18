@@ -4,6 +4,13 @@ This Template will deploy 3 Network Security Groups - one to attach to each of t
 - ADFS Server Subnet
 - WAP Server Subnet
 
+The template utilizes default values for NSG names and subnet, virtual network, and on-premises address ranges.  The NSG names can be customized as desired and all network/subnet address ranges should be updated to represent the correct values for the deployment environment.  See the following notes:
+- **ADDS Subnet NSG_Name** should be attached to the subnet containing Active Directory Domain Services Domain Controllers; this is often referred to as the Identity Management (IdM) subnet.  The default address range assigned is **10.251.251.0/25**.
+- **ADFS Subnet NSG_Name** should be attached to the subnet containing the ADFS Servers.  The default address range assigned is **10.251.251.128/26**.
+- **WAP Subnet NSG_Name** should be attached to the subnet containing the ADFS WAP (Proxy) Servers.  The default address range assigned is **10.251.251.192/26**.
+- **On Premises Address Range** allows you to specify one or more on-premises network address ranges (in CIDR format) that will be trusted for access to the ADDS and ADFS subnets, including RDP.
+- **Azure Virtual Network Address Range** allows you to specify one or more Azure virtual network subnet address ranges (in CIDR format) that will be trusted for access to the ADDS and ADFS subnets, including RDP.
+
 ## Visualize & Deploy
 <a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Ftewhitehurst%2FAzure%2Fmaster%2FNSG-ADFS_3-Subnet%2Fazuredeploy.json" target="_blank">
 <img src="https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.png"/>
