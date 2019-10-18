@@ -41,7 +41,7 @@
             "defaultValue": "10.251.251.192/26",
             "type": "String",
 			"metadata": {
-				"description": "The ADFS subnet's address range in CIDR notation (e.g. 192.168.3.0/24)."
+				"description": "The WAP subnet's address range in CIDR notation (e.g. 192.168.3.0/24)."
 			}
         },
 		"onPremisesAddressRange": {
