@@ -3,24 +3,59 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "ADDSSubnetNSG_Name": {
-            "defaultValue": "NSG-IdM-sn",
+            "defaultValue": "NSG-IdM-sn-Test",
             "type": "String",
 			"metadata": {
 				"description": "Name of the NSG that will be applied to the ADDS / IdM Subnet."
 			}
         },
+		"ADDSSubnetAddressRange": {
+            "defaultValue": "10.251.251.0/25",
+            "type": "String",
+			"metadata": {
+				"description": "The ADDS/IdM subnet's address range in CIDR notation (e.g. 192.168.1.0/24)."
+			}
+        },
 		"ADFSSubnetNSG_Name": {
-            "defaultValue": "NSG-ADFS-sn",
+            "defaultValue": "NSG-ADFS-sn-Test",
             "type": "String",
 			"metadata": {
 				"description": "Name of the NSG that will be applied to the ADFS Subnet."
 			}
         },
+		"ADFSSubnetAddressRange": {
+            "defaultValue": "10.251.251.128/26",
+            "type": "String",
+			"metadata": {
+				"description": "The ADFS subnet's address range in CIDR notation (e.g. 192.168.2.0/24)."
+			}
+        },
         "WAPSubnetNSG_Name": {
-            "defaultValue": "NSG-WAP-sn",
+            "defaultValue": "NSG-WAP-sn-Test",
             "type": "String",
 			"metadata": {
 				"description": "Name of the NSG that will be applied to the WAP Subnet."
+			}
+        },
+		"WAPSubnetAddressRange": {
+            "defaultValue": "10.251.251.192/26",
+            "type": "String",
+			"metadata": {
+				"description": "The ADFS subnet's address range in CIDR notation (e.g. 192.168.3.0/24)."
+			}
+        },
+		"onPremisesAddressRange": {
+            "defaultValue": "192.168.1.0/24",
+            "type": "String",
+			"metadata": {
+				"description": "The on-premises address range(s) to include as trusted networks in CIDR notation (e.g. 10.0.0.0/8). You can also provide a comma-separated list of address ranges."
+			}
+        },
+		"azureVirtualNetworkAddressRange": {
+            "defaultValue": "10.100.0.0/16",
+            "type": "String",
+			"metadata": {
+				"description": "The Azure virtual network or subnet address range(s) to include as trusted networks in CIDR notation (e.g. 192.168.0.0/16). You can also provide a comma-separated list of address ranges."
 			}
         },
 		"location": {
@@ -31,7 +66,10 @@
 			}
         }
     },
-    "variables": {},
+    "variables": {
+		"onPremAddr": "[split(parameters('onPremisesAddressRange'),',')]",
+		"azVnetAddr": "[split(parameters('azureVirtualNetworkAddressRange'),',')]"
+	},
     "resources": [
         {
             "type": "Microsoft.Network/networkSecurityGroups",
@@ -52,11 +90,7 @@
                             "direction": "Inbound",
                             "sourcePortRanges": [],
                             "destinationPortRanges": [],
-                            "sourceAddressPrefixes": [
-                                "10.251.251.0/25",
-                                "10.100.0.0/16",
-                                "192.168.1.0/24"
-                            ],
+                            "sourceAddressPrefixes": "[concat(array(parameters('ADDSSubnetAddressRange')),variables('azVnetAddr'),variables('onPremAddr'))]",
                             "destinationAddressPrefixes": []
                         }
                     },
@@ -83,7 +117,7 @@
                             "protocol": "*",
                             "sourcePortRange": "*",
                             "destinationPortRange": "*",
-                            "sourceAddressPrefix": "10.251.251.0/25",
+                            "sourceAddressPrefix": "[parameters('ADDSSubnetAddressRange')]",
                             "destinationAddressPrefix": "*",
                             "access": "Allow",
                             "priority": 1000,
@@ -187,7 +221,7 @@
                             "protocol": "*",
                             "sourcePortRange": "*",
                             "destinationPortRange": "5985",
-                            "sourceAddressPrefix": "10.251.251.0/25",
+                            "sourceAddressPrefix": "[parameters('ADDSSubnetAddressRange')]",
                             "destinationAddressPrefix": "*",
                             "access": "Allow",
                             "priority": 500,
@@ -204,7 +238,7 @@
                             "protocol": "*",
                             "sourcePortRange": "*",
                             "destinationPortRange": "443",
-                            "sourceAddressPrefix": "10.251.251.192/26",
+                            "sourceAddressPrefix": "[parameters('WAPSubnetAddressRange')]",
                             "destinationAddressPrefix": "*",
                             "access": "Allow",
                             "priority": 201,
@@ -220,7 +254,7 @@
                         "properties": {
                             "protocol": "*",
                             "sourcePortRange": "*",
-                            "sourceAddressPrefix": "10.251.251.0/25",
+                            "sourceAddressPrefix": "[parameters('ADDSSubnetAddressRange')]",
                             "destinationAddressPrefix": "*",
                             "access": "Allow",
                             "priority": 200,
@@ -273,11 +307,7 @@
                             "direction": "Inbound",
                             "sourcePortRanges": [],
                             "destinationPortRanges": [],
-                            "sourceAddressPrefixes": [
-                                "10.251.251.128/26",
-                                "10.100.0.0/16",
-                                "192.168.1.0/24"
-                            ],
+                            "sourceAddressPrefixes": "[concat(array(parameters('ADFSSubnetAddressRange')),variables('azVnetAddr'),variables('onPremAddr'))]",
                             "destinationAddressPrefixes": []
                         }
                     },
@@ -545,7 +575,7 @@
                             "protocol": "*",
                             "sourcePortRange": "*",
                             "destinationPortRange": "53",
-                            "sourceAddressPrefix": "10.251.251.192/26",
+                            "sourceAddressPrefix": "[parameters('WAPSubnetAddressRange')]",
                             "destinationAddressPrefix": "*",
                             "access": "Allow",
                             "priority": 400,
@@ -562,7 +592,7 @@
                             "protocol": "*",
                             "sourcePortRange": "*",
                             "destinationPortRange": "*",
-                            "sourceAddressPrefix": "10.251.251.192/26",
+                            "sourceAddressPrefix": "[parameters('WAPSubnetAddressRange')]",
                             "destinationAddressPrefix": "*",
                             "access": "Deny",
                             "priority": 450,
@@ -665,12 +695,7 @@
                             "direction": "Inbound",
                             "sourcePortRanges": [],
                             "destinationPortRanges": [],
-                            "sourceAddressPrefixes": [
-                                "10.251.251.0/25",
-                                "10.251.251.128/26",
-                                "10.100.0.0/16",
-                                "192.168.1.0/24"
-                            ],
+                            "sourceAddressPrefixes": "[concat(array(parameters('ADDSSubnetAddressRange')),array(parameters('ADFSSubnetAddressRange')),variables('azVnetAddr'),variables('onPremAddr'))]",
                             "destinationAddressPrefixes": []
                         }
                     },
@@ -799,7 +824,7 @@
                         "properties": {
                             "protocol": "*",
                             "sourcePortRange": "*",
-                            "sourceAddressPrefix": "10.251.251.0/25",
+                            "sourceAddressPrefix": "[parameters('ADDSSubnetAddressRange')]",
                             "destinationAddressPrefix": "*",
                             "access": "Allow",
                             "priority": 200,
@@ -819,7 +844,7 @@
                             "protocol": "*",
                             "sourcePortRange": "*",
                             "destinationPortRange": "5985",
-                            "sourceAddressPrefix": "10.251.251.0/25",
+                            "sourceAddressPrefix": "[parameters('ADDSSubnetAddressRange')]",
                             "destinationAddressPrefix": "*",
                             "access": "Allow",
                             "priority": 500,
@@ -878,7 +903,7 @@
                 "protocol": "*",
                 "sourcePortRange": "*",
                 "destinationPortRange": "443",
-                "sourceAddressPrefix": "10.251.251.192/26",
+                "sourceAddressPrefix": "[parameters('WAPSubnetAddressRange')]",
                 "destinationAddressPrefix": "*",
                 "access": "Allow",
                 "priority": 201,
@@ -1102,7 +1127,7 @@
                 "protocol": "*",
                 "sourcePortRange": "*",
                 "destinationPortRange": "53",
-                "sourceAddressPrefix": "10.251.251.192/26",
+                "sourceAddressPrefix": "[parameters('WAPSubnetAddressRange')]",
                 "destinationAddressPrefix": "*",
                 "access": "Allow",
                 "priority": 400,
@@ -1259,7 +1284,7 @@
                 "protocol": "*",
                 "sourcePortRange": "*",
                 "destinationPortRange": "*",
-                "sourceAddressPrefix": "10.251.251.0/25",
+                "sourceAddressPrefix": "[parameters('ADDSSubnetAddressRange')]",
                 "destinationAddressPrefix": "*",
                 "access": "Allow",
                 "priority": 1000,
@@ -1406,11 +1431,7 @@
                 "direction": "Inbound",
                 "sourcePortRanges": [],
                 "destinationPortRanges": [],
-                "sourceAddressPrefixes": [
-                    "10.251.251.0/25",
-                    "10.100.0.0/16",
-                    "192.168.1.0/24"
-                ],
+                "sourceAddressPrefixes": "[concat(array(parameters('ADDSSubnetAddressRange')),variables('azVnetAddr'),variables('onPremAddr'))]",
                 "destinationAddressPrefixes": []
             }
         },
@@ -1431,11 +1452,7 @@
                 "direction": "Inbound",
                 "sourcePortRanges": [],
                 "destinationPortRanges": [],
-                "sourceAddressPrefixes": [
-                    "10.251.251.128/26",
-                    "10.100.0.0/16",
-                    "192.168.1.0/24"
-                ],
+                "sourceAddressPrefixes": "[concat(array(parameters('ADFSSubnetAddressRange')),variables('azVnetAddr'),variables('onPremAddr'))]",
                 "destinationAddressPrefixes": []
             }
         },
@@ -1456,12 +1473,7 @@
                 "direction": "Inbound",
                 "sourcePortRanges": [],
                 "destinationPortRanges": [],
-                "sourceAddressPrefixes": [
-                    "10.251.251.0/25",
-                    "10.251.251.128/26",
-                    "10.100.0.0/16",
-                    "192.168.1.0/24"
-                ],
+                "sourceAddressPrefixes": "[concat(array(parameters('ADDSSubnetAddressRange')),array(parameters('ADFSSubnetAddressRange')),variables('azVnetAddr'),variables('onPremAddr'))]",
                 "destinationAddressPrefixes": []
             }
         },
@@ -1612,7 +1624,7 @@
             "properties": {
                 "protocol": "*",
                 "sourcePortRange": "*",
-                "sourceAddressPrefix": "10.251.251.0/25",
+                "sourceAddressPrefix": "[parameters('ADDSSubnetAddressRange')]",
                 "destinationAddressPrefix": "*",
                 "access": "Allow",
                 "priority": 200,
@@ -1636,7 +1648,7 @@
             "properties": {
                 "protocol": "*",
                 "sourcePortRange": "*",
-                "sourceAddressPrefix": "10.251.251.0/25",
+                "sourceAddressPrefix": "[parameters('ADDSSubnetAddressRange')]",
                 "destinationAddressPrefix": "*",
                 "access": "Allow",
                 "priority": 200,
@@ -1709,7 +1721,7 @@
                 "protocol": "*",
                 "sourcePortRange": "*",
                 "destinationPortRange": "5985",
-                "sourceAddressPrefix": "10.251.251.0/25",
+                "sourceAddressPrefix": "[parameters('ADDSSubnetAddressRange')]",
                 "destinationAddressPrefix": "*",
                 "access": "Allow",
                 "priority": 500,
@@ -1731,7 +1743,7 @@
                 "protocol": "*",
                 "sourcePortRange": "*",
                 "destinationPortRange": "5985",
-                "sourceAddressPrefix": "10.251.251.0/25",
+                "sourceAddressPrefix": "[parameters('ADDSSubnetAddressRange')]",
                 "destinationAddressPrefix": "*",
                 "access": "Allow",
                 "priority": 500,
@@ -1885,7 +1897,7 @@
                 "protocol": "*",
                 "sourcePortRange": "*",
                 "destinationPortRange": "*",
-                "sourceAddressPrefix": "10.251.251.192/26",
+                "sourceAddressPrefix": "[parameters('WAPSubnetAddressRange')]",
                 "destinationAddressPrefix": "*",
                 "access": "Deny",
                 "priority": 450,
