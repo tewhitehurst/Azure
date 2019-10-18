@@ -2,13 +2,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-		"location": {
-            "defaultValue": "[resourceGroup().location]",
-            "type": "String",
-			"metadata": {
-				"description": "The lolcation/region to deploy the resources into. Only change if resources need to be deployed to a different location than the resource group."
-			}
-        },
         "ADDSSubnetNSG_Name": {
             "defaultValue": "NSG-IdM-sn",
             "type": "String",
@@ -29,7 +22,14 @@
 			"metadata": {
 				"description": "Name of the NSG that will be applied to the WAP Subnet."
 			}
-        }
+        },
+		"location": {
+            "defaultValue": "[resourceGroup().location]",
+            "type": "String",
+			"metadata": {
+				"description": "The lolcation/region to deploy the resources into. Only change if resources need to be deployed to a different location than the resource group."
+			}
+        },
     },
     "variables": {},
     "resources": [
