@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "ADDSSubnetNSG_Name": {
-            "defaultValue": "NSG-IdM-sn-Test",
+            "defaultValue": "NSG-IdM-sn",
             "type": "String",
 			"metadata": {
 				"description": "Name of the NSG that will be applied to the ADDS / IdM Subnet."
@@ -17,7 +17,7 @@
 			}
         },
 		"ADFSSubnetNSG_Name": {
-            "defaultValue": "NSG-ADFS-sn-Test",
+            "defaultValue": "NSG-ADFS-sn",
             "type": "String",
 			"metadata": {
 				"description": "Name of the NSG that will be applied to the ADFS Subnet."
@@ -31,7 +31,7 @@
 			}
         },
         "WAPSubnetNSG_Name": {
-            "defaultValue": "NSG-WAP-sn-Test",
+            "defaultValue": "NSG-WAP-sn",
             "type": "String",
 			"metadata": {
 				"description": "Name of the NSG that will be applied to the WAP Subnet."
