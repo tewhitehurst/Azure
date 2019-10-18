@@ -1,5 +1,5 @@
 # NSGs for 3-Subnet ADFS Architectures
-This Template will deploy 3 Network Securit6y Groups - one to attach to each of the 2 subnets in the 3-subnet ADFS Architecture:
+This Template will deploy 3 Network Security Groups - one to attach to each of the 2 subnets in the 3-subnet ADFS Architecture:
 - ADDS / IdM (Identity Management) Subnet
 - ADFS Server Subnet
 - WAP Server Subnet
