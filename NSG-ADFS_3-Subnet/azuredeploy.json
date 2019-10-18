@@ -29,7 +29,7 @@
 			"metadata": {
 				"description": "The lolcation/region to deploy the resources into. Only change if resources need to be deployed to a different location than the resource group."
 			}
-        },
+        }
     },
     "variables": {},
     "resources": [
