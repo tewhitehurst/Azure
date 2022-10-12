@@ -1,2 +1,2 @@
 # Azure
-Azure Templates
+Azure Scripts & Templates
