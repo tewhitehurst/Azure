@@ -1,21 +1,51 @@
-$ScriptUrl = "https://raw.githubusercontent.com/tewhitehurst/Azure/main/AVD/Clean-LocalProfiles.ps1"
-$LocalScript = "C:\ProgramData\AVDProfileCleanup\Clean-LocalProfiles.ps1"
+# Load local configuration
+$ConfigFile = ".\AVDProfileCleanup.xml"
 
-$LocalScriptPath = Split-Path $LocalScript -Parent
+try {
+  [xml]$Config = Get-Content $ConfigFile -ErrorAction Stop
+  Write-Host "Configuration loaded"
+}
+catch {
+  Write-Host "Unable to load configuration [$ConfigFile], exiting!"
+  exit
+}
 
-if (!(Test-Path $LocalScriptPath)) {
+# Refresh config
+$ConfigUrl = $Config.AVDProfileCleanup.Common.ConfigUrl
+
+Invoke-WebRequest `
+    -Uri $ConfigUrl `
+    -OutFile $ConfigFile `
+    -UseBasicParsing
+
+try {
+  [xml]$Config = Get-Content $ConfigFile -ErrorAction Stop
+  Write-Host "Configuration refreshed & re-loaded"
+}
+catch {
+  Write-Host "Unable to load configuration [$ConfigFile], exiting!"
+  exit
+}
+
+# Set Variables
+[string] $InstallFolder = $Config.AVDProfileCleanup.Common.InstallFolder
+[string] $ScriptUrl = $Config.AVDProfileCleanup.Common.ScriptUrl
+[string] $LocalScript = Join-Path $InstallFolder $Config.AVDProfileCleanup.Common.LocalScript
+
+if (!(Test-Path $InstallFolder)) {
   try {
-    New-Item -Path $LocalScriptPath -ItemType Directory -Force -ErrorAction Stop
+    New-Item -Path $InstallFolder -ItemType Directory -Force -ErrorAction Stop
   }
   catch {
-    Write-Host "Unable to create log directory [$LocalScriptPath], exiting"
+    Write-Host "Unable to create install folder [$InstallFolder], exiting"
     exit
   }
 }
 
+# Download Latest Script
 Invoke-WebRequest `
-  -Uri $ScriptUrl `
-  -OutFile $LocalScript `
-  -UseBasicParsing
+    -Uri $ScriptUrl `
+    -OutFile $LocalScript `
+    -UseBasicParsing
 
-& $LocalScript -ExcludedUsers azAdmin,azUser -LogFile C:\Logs\AVDProfileCleanup.log
+& $LocalScript
