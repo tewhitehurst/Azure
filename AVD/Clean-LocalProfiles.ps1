@@ -1,17 +1,48 @@
 [CmdletBinding()]
 param(
   [Parameter()]
-  [int] $DaysToKeep = 7,
+  [int] $DaysToKeep,
 
   [Parameter()]
-  [switch] $DeleteProfiles = $false,
+  [switch] $DeleteProfiles,
 
   [Parameter()]
-  [string[]] $ExcludedUsers = @("Administrator", "avdadmin"),
+  [string[]] $ExcludedUsers,
 
   [Parameter()]
-  [string] $LogFile = "C:\Logs\ProfileCleanup.log"
+  [string] $LogFile,
+
+  [Parameter()]
+  [string] $ConfigFile = ".\AVDProfileCleanup.xml",
+
+  [Parameter()]
+  [switch] $OverrideConfig = $false
+
 )
+
+# Load config
+try {
+  [xml]$Config = Get-Content $ConfigFile -ErrorAction Stop
+  Write-Host "Configuration loaded"
+}
+catch {
+  Write-Host "Unable to load configuration [$ConfigFile], exiting!"
+  exit
+}
+
+# Process overrides by parameter
+if ($OverrideConfig) {
+  if ($DaysToKeep) {$Config.AVDProfileCleanup.Cleanup.DaysToKeep = $DaysToKeep}
+  if ($DeleteProfiles) {$Config.AVDProfileCleanup.Cleanup.DeleteProfiles = $DeleteProfiles}
+  if ($ExcludedUsers) {$Config.AVDProfileCleanup.Cleanup.ExcludedUsers = $ExcludedUsers}
+  if ($LogFile) {$Config.AVDProfileCleanup.Cleanup.LogFile = $LogFile}
+}
+
+# Set Variables
+[int] $DaysToKeep = $Config.AVDProfileCleanup.Cleanup.DaysToKeep
+[switch] $DeleteProfiles = [bool]::Parse($Config.AVDProfileCleanup.Cleanup.DeleteProfiles)
+[string[]] $ExcludedUsers = @($Config.AVDProfileCleanup.Cleanup.ExcludedUsers)
+[string] $LogFile = $Config.AVDProfileCleanup.Cleanup.LogFile
 
 # Process parameters/variables
 if ($ExcludedUsers -notcontains "Administrator") {
@@ -109,7 +140,7 @@ foreach ($Profile in $Profiles) {
   # Delete/report profiles for cleanup
   if ($DeleteProfiles) {
     try {
-      Remove-CimInstance -InputObject $Profile -ErrorAction Stop
+      #Remove-CimInstance -InputObject $Profile -ErrorAction Stop
       Write-Log "Deleted: $UserName"
     }
     catch {
