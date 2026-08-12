@@ -2,9 +2,9 @@
 <AVDProfileCleanup>
   <Common>
     <InstallFolder>C:\ProgramData\AVDProfileCleanup</InstallFolder>
-    <ConfigUrl>https://raw.githubusercontent.com/tewhitehurst/Azure/main/AVD/AVDProfileCleanup.xml</ConfigUrl>
-    <ScriptUrl>https://raw.githubusercontent.com/tewhitehurst/Azure/main/AVD/Clean-LocalProfiles.ps1</ScriptUrl>
-    <LauncherUrl>https://raw.githubusercontent.com/tewhitehurst/Azure/main/AVD/Launch-AVDProfileCleanup.ps1</LauncherUrl>
+    <ConfigUrl>https://raw.githubusercontent.com/tewhitehurst/Azure/main/AVD/AVDProfileCleanup/AVDProfileCleanup.xml</ConfigUrl>
+    <ScriptUrl>https://raw.githubusercontent.com/tewhitehurst/Azure/main/AVD/AVDProfileCleanup/Clean-LocalProfiles.ps1</ScriptUrl>
+    <LauncherUrl>https://raw.githubusercontent.com/tewhitehurst/Azure/main/AVD/AVDProfileCleanup/Launch-AVDProfileCleanup.ps1</LauncherUrl>
     <LocalScript>Cleanup-LocalProfiles.ps1</LocalScript>
     <LocalLauncher>Launch-AVDProfileCleanup.ps1</LocalLauncher>
     <LocalConfig>AVDProfileCleanup.xml</LocalConfig>
