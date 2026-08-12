@@ -16,7 +16,7 @@
     <DaysToRun>Sunday</DaysToRun>
     <TimeToRun>3AM</TimeToRun>
     <TaskUser>SYSTEM</TaskUser>
-    <UseLauncher>true</UseLauncher>
+    <UseLauncher>false</UseLauncher>
     <LogFile>C:\Logs\AVDProfileCleanup\Install-AVDProfileCleanup.log</LogFile>
   </Installer>
 
